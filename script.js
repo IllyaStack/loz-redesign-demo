@@ -60,12 +60,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (isMenuOpen) {
             hamburger.classList.add('active');
+            hamburger.setAttribute('aria-expanded', 'true');
+            hamburger.setAttribute('aria-label', 'Menü schließen');
             mobileMenu.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            document.body.classList.add('mobile-menu-open');
         } else {
             hamburger.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+            hamburger.setAttribute('aria-label', 'Menü öffnen');
             mobileMenu.classList.remove('active');
-            document.body.style.overflow = ''; // Restore scrolling
+            document.body.classList.remove('mobile-menu-open');
         }
     };
 
@@ -73,6 +77,15 @@ document.addEventListener('DOMContentLoaded', () => {
         hamburger.addEventListener('click', (e) => {
             e.stopPropagation();
             toggleMenu();
+        });
+    }
+
+    // Close menu when mobile booking CTA is tapped
+    if (mobileMenu) {
+        mobileMenu.querySelectorAll('[data-booking-link]').forEach(cta => {
+            cta.addEventListener('click', () => {
+                toggleMenu(false);
+            });
         });
     }
 
@@ -89,6 +102,13 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleMenu(false);
         }
     });
+
+    // Reset menu on resize to desktop view
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 1024 && isMenuOpen) {
+            toggleMenu(false);
+        }
+    }, { passive: true });
 
     // --- 2. Smooth scroll navigation ---
     const headerOffset = 72;
